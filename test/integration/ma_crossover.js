@@ -93,7 +93,7 @@ describe('ema integration test', () => {
           expect(e.key).to.eq('trade:1m:tAAABBB')
           expect(e.chanId).to.be.a('number')
         })
-        .received(NEW_ORDER, ({ fields: [placeholder, details] }) => {
+        .received(NEW_ORDER, ([placeholder, details]) => {
           expect(details.symbol).to.eq('tAAABBB')
           expect(details.type).to.eq('EXCHANGE MARKET')
           expect(details.amount).to.eq('1.00000000')

@@ -34,8 +34,8 @@ class SessionSpy {
     this._incomingEvents = new Iterator()
     this._outgoingEvents = new Iterator()
 
-    session.on('incoming', this._onIncomingMessage.bind(this))
-    session.on('outgoing', this._onOutgoingMessage.bind(this))
+    session._conn.on('message', this._onIncomingMessage.bind(this))
+    session._conn.on('send', this._onOutgoingMessage.bind(this))
   }
 
   /**
@@ -63,11 +63,24 @@ class SessionSpy {
   }
 
   _onIncomingMessage (event) {
-    this._incomingEvents.push(event)
+    this._incomingEvents.push(this._format(event))
   }
 
   _onOutgoingMessage (event) {
-    this._outgoingEvents.push(event)
+    this._outgoingEvents.push(this._format(event))
+  }
+
+  _format (message) {
+    let event, payload
+
+    if (message instanceof Array) {
+      [, event, ...payload] = message
+    } else {
+      event = message.event
+      payload = message
+    }
+
+    return { name: event, payload }
   }
 
   _count (iter, name) {

@@ -8,7 +8,6 @@ class ApiSpy {
    */
   constructor (server) {
     this.connections = []
-
     server.on('new-session', this._onNewSession.bind(this))
   }
 

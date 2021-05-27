@@ -82,8 +82,6 @@ class BitfinexSessionMock extends EventEmitter {
    * @param {Object} payload
    */
   publish (event, payload = {}) {
-    this.emit('outgoing', { name: event, payload })
-
     this._conn.send({
       ...payload,
       event
@@ -131,9 +129,6 @@ class BitfinexSessionMock extends EventEmitter {
    */
   notify (type, status, info, text = '') {
     const mts = this.now()
-
-    this.emit('outgoing', { name: type, payload: { mts, type, info, status, text } })
-
     this._conn.streamTo(MAIN_CHANNEL_ID, NOTIFICATION, [mts, type, null, null, info, null, status, text])
   }
 
@@ -161,8 +156,6 @@ class BitfinexSessionMock extends EventEmitter {
       debug('could not handle message %j', message)
       return
     }
-
-    this.emit('incoming', { name: event, payload })
 
     this.emit(event, payload)
   }

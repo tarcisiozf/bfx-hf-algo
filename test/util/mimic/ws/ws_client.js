@@ -12,12 +12,14 @@ const DEFAULT_INTERVAL = 50
  * @property {number} [interval]
  * @property {Codec} [codec] - message codec, defaults to JsonCodec
  */
-class WsClient {
+class WsClient extends EventEmitter {
   /**
    * @param {WebSocket} conn
    * @param {WsClientArgs} args
    */
   constructor (conn, args = {}) {
+    super()
+
     const {
       interval = DEFAULT_INTERVAL,
       codec = JsonCodec
@@ -30,7 +32,6 @@ class WsClient {
     this._timeouts = []
     this._intervals = []
     this._messages = []
-    this._ev = new EventEmitter()
 
     this._start()
   }
@@ -99,11 +100,7 @@ class WsClient {
    * @returns {WsClient}
    */
   onMessage (fn) {
-    this._ev.on('message', (payload) => {
-      const message = this._codec
-        ? this._codec.decode(payload)
-        : payload
-
+    this.on('message', (message) => {
       fn(this, message)
     })
 
@@ -113,7 +110,7 @@ class WsClient {
   close () {
     this._timeouts.forEach((t) => clearTimeout(t))
     this._intervals.forEach((i) => clearInterval(i))
-    this._ev.removeAllListeners()
+    this.removeAllListeners()
   }
 
   _start () {
@@ -122,7 +119,11 @@ class WsClient {
     })
 
     this._conn.on('message', (data) => {
-      this._ev.emit('message', data)
+      const message = this._codec
+        ? this._codec.decode(data)
+        : data
+
+      this.emit('message', message)
     })
 
     const interval = setInterval(this._pullMessages.bind(this), this._interval)
@@ -140,6 +141,7 @@ class WsClient {
       ? this._codec.encode(message)
       : message
 
+    this.emit('send', message)
     this._conn.send(payload)
   }
 }
