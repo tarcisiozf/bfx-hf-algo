@@ -71,16 +71,16 @@ class SessionSpy {
   }
 
   _format (message) {
-    let event, payload
+    let name, payload
 
     if (message instanceof Array) {
-      [, event, ...payload] = message
+      [, name, ...payload] = message
     } else {
-      event = message.event
+      name = message.event
       payload = message
     }
 
-    return { name: event, payload }
+    return { name, payload }
   }
 
   _count (iter, name) {
