@@ -15,7 +15,7 @@ const getInstance = ({
   },
 
   h: {
-    tracer: { createSignal: () => ({ meta: {} }) },
+    tracer: { collect: () => ({ meta: {} }) },
     debug: () => {},
     emit: async () => {},
     ...helperParams
