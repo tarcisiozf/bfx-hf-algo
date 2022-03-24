@@ -7,5 +7,6 @@ const aoHost = require('../../lib/ao_host')
 
 // TODO: stub for coverage results
 describe('aoHost', () => {
+  assert.fail(-1)
   assert.ok(_isFunction(aoHost))
 })
